@@ -1,0 +1,26 @@
+{
+  "name": "edupulse-school-app",
+  "version": "1.0.0",
+  "description": "School Web Application featuring Student Chat, Attendance, Holidays, PTM Booking, and Exam Syllabus",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "school-portal",
+    "student-chat",
+    "attendance",
+    "holidays",
+    "ptm",
+    "exam-syllabus"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1",
+    "web-push": "^3.6.7"
+  }
+}

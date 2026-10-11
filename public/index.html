@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B.S.M.P School - Student Portal</title>
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" href="/icons/school-crest.png">
+  <link rel="apple-touch-icon" href="/icons/school-crest.png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@1/index.js"></script>
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= 1. SECURE STUDENT AUTH GATEWAY ================= -->
+  <div id="studentAuthScreen" class="auth-wrapper" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <img src="/icons/school-crest.png" alt="B.S.M.P School crest">
+        </div>
+        <h2>B.S.M.P School Student Portal</h2>
+        <p>Sign in with your Roll Number or Email to access your classes, chat, attendance, and syllabus.</p>
+      </div>
+
+      <!-- Auth Tabs: Login vs Register -->
+      <div class="auth-nav-tabs">
+        <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">
+          <i data-lucide="log-in"></i> Student Login
+        </button>
+        <button type="button" class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">
+          <i data-lucide="user-plus"></i> New Student Sign Up
+        </button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <form id="studentLoginForm" class="auth-form">
+        <div class="form-group">
+          <label for="loginIdentifier">Roll Number or Email <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="user"></i>
+            <input type="text" id="loginIdentifier" class="form-input" placeholder="e.g. 10A-01 or kabir@school.edu" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="lock"></i>
+            <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+          </div>
+        </div>
+
+        <!-- Quick Demo Pill -->
+        <div class="demo-credentials-box">
+          <div style="font-weight:700;margin-bottom:0.25rem;color:var(--primary);"><i data-lucide="key"></i> Quick Demo Account:</div>
+          <div class="demo-pill-btn" onclick="fillStudentDemo()">
+            Roll: <code>10A-01</code> • Pass: <code>password123</code> (Click to Fill)
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          <i data-lucide="shield-check"></i> Sign In to Portal
+        </button>
+      </form>
+
+      <!-- REGISTRATION FORM -->
+      <form id="studentRegisterForm" class="auth-form" style="display: none;">
+        <div class="form-group">
+          <label for="regName">Full Name <span class="req">*</span></label>
+          <input type="text" id="regName" class="form-input" placeholder="e.g. Kabir Sharma" required>
+        </div>
+
+        <div class="form-group">
+          <label for="regRollNo">Roll Number <span class="req">*</span></label>
+          <input type="text" id="regRollNo" class="form-input" placeholder="e.g. 8A-24" required>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="regGrade">Class & Section</label>
+            <input type="text" id="regGrade" class="form-input" value="Grade 8" readonly aria-describedby="regGradeHelp">
+            <small id="regGradeHelp" class="form-help">Grade 8 is assigned for student sign-up and cannot be changed here.</small>
+          </div>
+          <div class="form-group">
+            <label for="regSection">Section <span class="req">*</span></label>
+            <select id="regSection" class="form-select" required>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="regHouse">School House</label>
+            <select id="regHouse" class="form-select">
+              <option value="Phoenix House">Phoenix House (Red)</option>
+              <option value="Falcon House">Falcon House (Blue)</option>
+              <option value="Pegasus House">Pegasus House (Green)</option>
+              <option value="Dragon House">Dragon House (Yellow)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="regEmail">Email Address</label>
+            <input type="email" id="regEmail" class="form-input" placeholder="kabir@school.edu">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="regPassword">Create Password <span class="req">*</span></label>
+          <input type="password" id="regPassword" class="form-input" placeholder="Min 6 characters" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">
+          <i data-lucide="user-check"></i> Complete Student Registration
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Are you a Teacher or Administrator?</span>
+        <a href="/admin" class="auth-link"><i data-lucide="external-link"></i> Go to Teacher Admin Portal</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= 2. AUTHENTICATED STUDENT PORTAL ================= -->
+  <div id="studentAppLayout" class="app-layout" style="display: none;">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="/icons/school-crest.png" alt="B.S.M.P School crest">
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">B.S.M.P School</span>
+          <span id="portalSubtitle" class="brand-subtitle">Student Portal • Academic Year 2026-2027</span>
+        </div>
+      </div>
+
+      <!-- Center Live Pulse -->
+      <div class="academic-badge">
+        <span class="pulse-dot"></span>
+        <span id="sessionStatusText">Student Session Active</span>
+        <span id="sessionModeTag" class="term-tag">Term 1</span>
+      </div>
+
+      <!-- Right Controls: Theme Toggle, Admin Link, Student Profile & Logout -->
+      <div class="nav-controls">
+        <!-- Theme Changer (Dark/Light) -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+          <i data-lucide="moon" id="themeIcon"></i>
+          <span id="themeText">Dark</span>
+        </button>
+
+        <!-- Link to separate Teacher Admin URL -->
+        <a href="/admin" class="btn btn-sm btn-outline faculty-link-btn" title="Go to Teacher Admin Panel">
+          <i data-lucide="shield"></i>
+          <span>Faculty Admin ↗</span>
+        </a>
+
+        <!-- Student Profile Card in Header -->
+        <div class="profile-header-card">
+          <label class="avatar-upload-button" for="profilePictureInput" title="Change profile picture">
+            <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Student" alt="Student profile picture" id="userAvatar" class="user-avatar">
+            <span class="avatar-upload-indicator" aria-hidden="true"><i data-lucide="camera"></i></span>
+          </label>
+          <input type="file" id="profilePictureInput" class="visually-hidden" accept="image/jpeg,image/png,image/webp">
+          <div class="profile-header-info">
+            <div class="user-name-role">
+              <span id="userName" class="user-name">Student</span>
+              <span class="badge badge-student">Student</span>
+            </div>
+            <span id="userSub" class="user-sub">Roll No: 10A-01 • Grade 10</span>
+          </div>
+        </div>
+
+        <!-- Student Logout Button -->
+        <button id="studentLogoutBtn" class="btn btn-sm btn-outline btn-logout" title="Log Out">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY CONTAINER WITH SIDEBAR TABS -->
+    <div class="app-body">
+      <!-- SIDEBAR NAVIGATION -->
+      <aside class="sidebar">
+        <nav class="nav-menu">
+          <button class="nav-item active" data-tab="dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+          </button>
+          <button class="nav-item" data-tab="chat">
+            <i data-lucide="message-square"></i>
+            <span>Class Chat & Doubts</span>
+            <span class="badge badge-notification" id="chatBadge">0</span>
+          </button>
+          <button class="nav-item" data-tab="announcements">
+            <i data-lucide="megaphone"></i>
+            <span>Announcements</span>
+          </button>
+          <button class="nav-item" data-tab="attendance">
+            <i data-lucide="calendar-check"></i>
+            <span>My Attendance</span>
+            <span class="badge badge-pill badge-green" id="sidebarAttendanceRate">100%</span>
+          </button>
+          <button class="nav-item" data-tab="holidays">
+            <i data-lucide="palmtree"></i>
+            <span>School Holidays</span>
+            <span class="badge badge-pill badge-amber">Upcoming</span>
+          </button>
+          <button class="nav-item" data-tab="ptm">
+            <i data-lucide="handshake"></i>
+            <span>Parent-Teacher Meeting</span>
+            <span class="badge badge-pill badge-blue">PTM</span>
+          </button>
+          <button class="nav-item" data-tab="syllabus">
+            <i data-lucide="book-open"></i>
+            <span>Exam</span>
+            <span class="badge badge-pill badge-purple">Datesheet</span>
+          </button>
+        </nav>
+
+        <!-- Sidebar Footer Card -->
+        <div class="sidebar-footer-card">
+          <div class="school-help-box">
+            <i data-lucide="shield-check"></i>
+            <div>
+              <strong id="sidebarSessionTitle">Secure Student Session</strong>
+              <small id="sidebarStudentRoll">Roll: 10A-01</small>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CONTENT PANELS -->
+      <main class="main-content">
+        <button type="button" class="mobile-dashboard-return" onclick="switchTab('dashboard')">
+          <i data-lucide="arrow-left"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <!-- ================= 1. DASHBOARD VIEW ================= -->
+        <section id="tab-dashboard" class="tab-panel active">
+          <div class="panel-header">
+            <div>
+              <h1 class="page-title">Welcome back, <span id="dashWelcomeName">Student</span>! 🎓</h1>
+              <p class="page-desc">Here is your academic overview, today's schedule, and pending notices.</p>
+            </div>
+            <div class="today-date-badge">
+              <i data-lucide="clock"></i>
+              <span id="liveClock">Tuesday, Oct 6, 2026</span>
+            </div>
+          </div>
+
+          <!-- Quick Metrics Grid -->
+          <div class="stats-grid">
+            <div class="stat-card" onclick="switchTab('attendance')">
+              <div class="stat-header">
+                <span class="stat-title">Attendance Rate</span>
+                <span class="stat-icon icon-green"><i data-lucide="user-check"></i></span>
+              </div>
+              <div class="stat-value" id="dashAttendanceVal">100%</div>
+              <div class="stat-footer text-green">
+                <i data-lucide="shield-check"></i> Above requirement (75%)
+              </div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('holidays')">
+              <div class="stat-header">
+                <span class="stat-title">Next Holiday</span>
+                <span class="stat-icon icon-amber"><i data-lucide="palmtree"></i></span>
+              </div>
+              <div class="stat-value" id="dashNextHolidayName">Dussehra Break</div>
+              <div class="stat-footer text-amber">
+                <i data-lucide="calendar"></i> <span id="dashNextHolidayDates">Oct 20 - 22, 2026</span>
+              </div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('syllabus')">
+              <div class="stat-header">
+                <span class="stat-title">Upcoming Exams</span>
+                <span class="stat-icon icon-purple"><i data-lucide="graduation-cap"></i></span>
+              </div>
+              <div class="stat-value">Mid-Term Exams</div>
+              <div class="stat-footer text-purple">
+                <i data-lucide="book-marked"></i> Starts Oct 26 (Datesheet Live)
+              </div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('ptm')">
+              <div class="stat-header">
+                <span class="stat-title">PTM Conference</span>
+                <span class="stat-icon icon-blue"><i data-lucide="handshake"></i></span>
+              </div>
+              <div class="stat-value" id="dashPTMCount">Slots Open</div>
+              <div class="stat-footer text-blue">
+                <i data-lucide="check-circle-2"></i> Saturday, Oct 24, 2026
+              </div>
+            </div>
+          </div>
+
+          <div class="push-notification-card card" id="pushNotificationCard">
+            <div class="push-notification-copy">
+              <span class="push-notification-icon"><i data-lucide="bell-ring"></i></span>
+              <div>
+                <strong>School notifications</strong>
+                <p id="pushNotificationStatus">Get important school notices on this phone, even when the portal is closed. iPhone users: add the portal to your Home Screen first.</p>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" id="pushNotificationButton">
+              <i data-lucide="bell"></i><span>Enable notifications</span>
+            </button>
+          </div>
+
+          <!-- Two Column Layout: Today's Schedule + Notice Board -->
+          <div class="dashboard-grid">
+            <!-- Today's Schedule -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="calendar-days"></i>
+                  <span>Today's Class Schedule</span>
+                </div>
+                <span class="badge badge-pill badge-green">Live Today</span>
+              </div>
+              <div class="timetable-list">
+                <div class="timetable-item completed">
+                  <div class="tt-time">08:30 - 09:20</div>
+                  <div class="tt-body">
+                    <strong>Mathematics</strong>
+                    <small>Quadratic Equations & Problem Solving</small>
+                  </div>
+                  <span class="status-tag tag-done">Completed</span>
+                </div>
+                <div class="timetable-item active">
+                  <div class="tt-time">09:30 - 10:20</div>
+                  <div class="tt-body">
+                    <strong>Science & Physics</strong>
+                    <small>Light - Reflection & Ray Diagrams</small>
+                  </div>
+                  <span class="status-tag tag-now">Current Period</span>
+                </div>
+                <div class="timetable-item">
+                  <div class="tt-time">10:30 - 11:15</div>
+                  <div class="tt-body">
+                    <strong>English Literature</strong>
+                    <small>Creative Writing & Grammar</small>
+                  </div>
+                  <span class="status-tag tag-up">Upcoming</span>
+                </div>
+                <div class="timetable-item">
+                  <div class="tt-time">11:15 - 12:00</div>
+                  <div class="tt-body">
+                    <strong>Computer Science & AI</strong>
+                    <small>Python Lists & Loops</small>
+                  </div>
+                  <span class="status-tag tag-up">Upcoming</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Urgent Announcements / Notice Board -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="megaphone"></i>
+                  <span>Official Notice Board</span>
+                </div>
+                <button class="btn btn-sm btn-outline" onclick="switchTab('chat')">View Chat Circulars</button>
+              </div>
+              <div class="notice-list" id="dashboardNoticesList"></div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= 2. STUDENT CHAT VIEW ================= -->
+        <section id="tab-chat" class="tab-panel">
+          <div class="chat-container">
+            <div class="chat-sidebar">
+              <div class="chat-sidebar-header">
+                <h3><i data-lucide="messages-square"></i> Channels</h3>
+                <span class="online-indicator-pill"><span class="dot"></span> Live</span>
+              </div>
+              <div class="channel-group">
+                <div class="group-title">ROOMS</div>
+                <div id="channelList" class="channel-list"></div>
+              </div>
+              <div class="channel-group">
+                <div class="group-title">ONLINE CLASSMATES & TEACHERS</div>
+                <div id="onlineUsersList" class="user-list"></div>
+              </div>
+            </div>
+
+            <div class="chat-main">
+              <div class="chat-header">
+                <div class="chat-header-info">
+                  <h3 id="currentChannelName"><i data-lucide="hash"></i> Class General Chat</h3>
+                  <p id="currentChannelDesc">Live class discussions & student queries</p>
+                </div>
+                <div class="chat-header-actions">
+                  <span class="badge badge-pill badge-green"><i data-lucide="radio"></i> Real-time Active</span>
+                </div>
+              </div>
+
+              <div class="messages-container" id="messagesContainer"></div>
+
+              <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                <span id="typingUserText">Someone is typing...</span>
+              </div>
+
+              <div class="chat-cooldown-notice" id="chatCooldownNotice" role="status" hidden></div>
+              <div class="pending-attachment" id="pendingAttachment" hidden>
+                <i data-lucide="file-text"></i>
+                <span id="pendingAttachmentName"></span>
+                <button type="button" class="btn-icon" id="removePendingAttachment" title="Remove attachment" aria-label="Remove attachment">
+                  <i data-lucide="x"></i>
+                </button>
+              </div>
+              <div class="chat-readonly-notice" id="chatReadOnlyNotice" role="status" hidden>
+                <i data-lucide="megaphone"></i>
+                <span>Official Announcements is read-only. Only school staff can post here.</span>
+              </div>
+              <form class="chat-input-bar" id="chatForm">
+                <div class="input-actions-left">
+                  <button type="button" class="btn-icon" id="quickEmojiBtn" title="Choose emoji" aria-label="Choose emoji" aria-expanded="false" aria-controls="emojiPicker">😊</button>
+                  <emoji-picker class="emoji-picker" id="emojiPicker" locale="en" hidden></emoji-picker>
+                  <button type="button" class="btn-icon" id="attachBtn" title="Attach a document, image, or video" aria-label="Attach a document, image, or video"><i data-lucide="paperclip"></i></button>
+                  <input type="file" id="chatFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.csv,.jpg,.jpeg,.png,.gif,.webp,.mp4,.m4v,.mov,.webm" hidden>
+                </div>
+                <input 
+                  type="text" 
+                  id="chatInput" 
+                  placeholder="Ask a doubt or message your classmates... (Press Enter to send)" 
+                  autocomplete="off"
+                >
+                <button type="submit" class="btn btn-primary btn-send">
+                  <span>Send</span>
+                  <i data-lucide="send"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= 3. ATTENDANCE VIEW ================= -->
+        <section id="tab-attendance" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h1 class="page-title">Attendance Tracker</h1>
+              <p class="page-desc">Track real-time attendance, subject breakdown, and apply for student leave.</p>
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-outline" id="selfCheckInBtn" aria-live="polite">
+                <i data-lucide="check-square"></i> Self Check-in Today
+              </button>
+              <button class="btn btn-primary" id="openLeaveModalBtn">
+                <i data-lucide="file-plus"></i> Apply for Leave
+              </button>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Overall Percentage</span>
+                <span class="stat-icon icon-green"><i data-lucide="percent"></i></span>
+              </div>
+              <div class="stat-value" id="overallPercVal">100%</div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill green" id="overallProgressBar" style="width: 100%;"></div>
+              </div>
+              <div class="stat-footer text-green">
+                <i data-lucide="check-circle"></i> Minimum Required: 75%
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Days Present</span>
+                <span class="stat-icon icon-blue"><i data-lucide="calendar-check-2"></i></span>
+              </div>
+              <div class="stat-value" id="daysPresentVal">1</div>
+              <div class="stat-footer text-muted">Out of <span id="totalDaysVal">1</span> total school days</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Days Absent</span>
+                <span class="stat-icon icon-red"><i data-lucide="calendar-x-2"></i></span>
+              </div>
+              <div class="stat-value" id="daysAbsentVal">0</div>
+              <div class="stat-footer text-muted">(Medical leaves included)</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Current Streak</span>
+                <span class="stat-icon icon-amber"><i data-lucide="flame"></i></span>
+              </div>
+              <div class="stat-value" id="streakVal">1 Day</div>
+              <div class="stat-footer text-amber">
+                <i data-lucide="award"></i> Active Attendance Record
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="card-header-title">
+                <i data-lucide="bar-chart-3"></i>
+                <span>Subject-wise Attendance Breakdown</span>
+              </div>
+              <span class="badge badge-pill badge-green">Compliant</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Subject</th>
+                    <th>Teacher</th>
+                  </tr>
+                </thead>
+                <tbody id="subjectAttendanceTable"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="grid-2col">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="history"></i>
+                  <span>Recent Daily Attendance Logs</span>
+                </div>
+              </div>
+              <div class="daily-logs-list" id="dailyLogsList"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="file-text"></i>
+                  <span>My Leave Applications & Status</span>
+                </div>
+              </div>
+              <div class="leave-list" id="leaveHistoryList"></div>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- ================= 4. HOLIDAYS VIEW ================= -->
+        <section id="tab-holidays" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h1 class="page-title">School Holidays & Academic Calendar</h1>
+              <p class="page-desc">Stay informed about upcoming national holidays, festivals, and breaks.</p>
+            </div>
+            <div class="holiday-countdown-box">
+              <div class="countdown-label">NEXT BREAK STARTS IN</div>
+              <div class="countdown-digits" id="holidayCountdown">14 Days</div>
+              <div class="countdown-name" id="holidayCountdownName">Dussehra Break</div>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <span class="filter-label"><i data-lucide="filter"></i> Filter by:</span>
+            <button class="filter-btn active" data-filter="all">All Holidays</button>
+            <button class="filter-btn" data-filter="Festival">Festivals</button>
+            <button class="filter-btn" data-filter="Vacation">Vacations</button>
+            <button class="filter-btn" data-filter="Gazetted Holiday">Gazetted</button>
+          </div>
+
+          <div class="holidays-grid" id="holidaysGrid"></div>
+        </section>
+
+
+        <!-- ================= 5. PTM VIEW ================= -->
+        <section id="tab-ptm" class="tab-panel">
+          <div class="panel-header">
+            <div>
+              <h1 class="page-title">Parent-Teacher Meeting (PTM)</h1>
+              <p class="page-desc">Schedule 1-on-1 conferences with teachers and review past observations.</p>
+            </div>
+            <span class="badge badge-pill badge-green"><i data-lucide="check-circle-2"></i> PTM Active</span>
+          </div>
+
+          <div class="ptm-announcement-card">
+            <div class="ptm-banner-content">
+              <div class="ptm-banner-tag">TERM 1 CONFERENCE</div>
+              <h2 id="ptmEventTitle">Term 1 Parent-Teacher Conference (PTM)</h2>
+              <div class="ptm-banner-details">
+                <span><i data-lucide="calendar"></i> <strong>Date:</strong> Saturday, October 24, 2026</span>
+                <span><i data-lucide="clock"></i> <strong>Time:</strong> 08:30 AM - 01:30 PM</span>
+                <span><i data-lucide="map-pin"></i> <strong>Venue:</strong> Main Academic Block</span>
+              </div>
+              <p class="ptm-instructions">
+                Parents are requested to book individual 15-minute discussion slots with subject teachers in advance.
+              </p>
+            </div>
+          </div>
+
+          <div class="ptm-layout-grid">
+            <div class="card ptm-booking-card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="calendar-plus"></i>
+                  <span>Book a PTM Meeting Slot</span>
+                </div>
+              </div>
+              <form id="ptmBookingForm" class="ptm-form">
+                <div class="form-group">
+                  <label for="ptmTeacherSelect">Select Teacher / Subject <span class="req">*</span></label>
+                  <select id="ptmTeacherSelect" class="form-select" required></select>
+                </div>
+
+                <div class="form-group">
+                  <label>Select Time Slot <span class="req">*</span></label>
+                  <div id="slotSelectorPills" class="slot-pills-container"></div>
+                  <input type="hidden" id="selectedTimeSlot" required>
+                </div>
+
+                <div class="form-row-2">
+                  <div class="form-group">
+                    <label for="ptmParentName">Parent / Guardian Name <span class="req">*</span></label>
+                    <input type="text" id="ptmParentName" class="form-input" placeholder="Parent Name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="ptmMode">Meeting Mode</label>
+                    <select id="ptmMode" class="form-select">
+                      <option value="In-Person">In-Person (On Campus)</option>
+                      <option value="Virtual Meet">Virtual (Google Meet)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="ptmTopic">Discussion Agenda</label>
+                  <textarea id="ptmTopic" class="form-textarea" rows="2" placeholder="e.g. Want to discuss exam speed and homework completion..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i data-lucide="calendar-check"></i> Confirm PTM Slot Booking
+                </button>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-header-title">
+                  <i data-lucide="calendar-check-2"></i>
+                  <span>My Confirmed Appointments</span>
+                </div>
+                <span class="badge badge-pill badge-blue" id="ptmBookingsCount">0 Meetings</span>
+              </div>
+              <div class="ptm-bookings-list" id="ptmBookingsList"></div>
+            </div>
+          </div>
+
+          <div class="card mt-4">
+            <div class="card-header">
+              <div class="card-header-title">
+                <i data-lucide="message-square-quote"></i>
+                <span>Teacher Feedback & Academic Remarks</span>
+              </div>
+            </div>
+            <div class="ptm-feedback-grid" id="ptmFeedbackGrid"></div>
+          </div>
+        </section>
+
+
+        <!-- ================= 6. EXAM VIEW ================= -->
+        <section id="tab-syllabus" class="tab-panel">
+          <div id="examClosedView" class="exam-closed-view" hidden>
+            <i data-lucide="lock-keyhole"></i>
+            <h1>Exam Closed</h1>
+          </div>
+          <div id="examOpenView">
+          <div class="panel-header">
+            <div>
+              <h1 class="page-title">Exam</h1>
+              <p class="page-desc">View the official exam datesheet and schedule.</p>
+            </div>
+            <div class="action-buttons">
+              <span id="studentSyllabusStatus" class="badge badge-pill badge-green">Syllabus Open</span>
+              <button class="btn btn-outline" id="printSyllabusBtn">
+                <i data-lucide="printer"></i> Print / Export Datesheet
+              </button>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="card-header-title">
+                <i data-lucide="calendar-range"></i>
+                <span id="activeExamTitle">Mid-Term Examination (Term 1) 2026 Timetable</span>
+              </div>
+              <span class="badge badge-pill badge-purple">Datesheet Official</span>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Subject</th>
+                    <th>Subject Code</th>
+                    <th>Time</th>
+                    <th>Exam Hall</th>
+                    <th>Max Marks</th>
+                  </tr>
+                </thead>
+                <tbody id="examTimetableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <dialog class="image-viewer" id="imageViewer" aria-label="Image preview">
+    <button type="button" class="image-viewer-close" id="closeImageViewer" aria-label="Close image preview">
+      <i data-lucide="x"></i>
+    </button>
+    <img id="imageViewerImage" alt="">
+    <p id="imageViewerCaption"></p>
+  </dialog>
+
+  <dialog class="chat-report-dialog" id="chatReportDialog" aria-labelledby="chatReportTitle">
+    <form id="chatReportForm">
+      <div class="modal-header">
+        <h3 id="chatReportTitle">Report chat message</h3>
+        <button type="button" class="modal-close-btn" id="closeChatReport" aria-label="Close report form">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="chat-report-guidance">Reports are reviewed by school staff. Please choose the closest reason.</p>
+        <div class="form-group">
+          <label for="chatReportReason">Reason</label>
+          <select id="chatReportReason" class="form-select" required>
+            <option value="">Choose a reason</option>
+            <option value="bullying">Bullying or harassment</option>
+            <option value="inappropriate">Inappropriate content</option>
+            <option value="spam">Spam or disruption</option>
+            <option value="other">Other safety concern</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="chatReportDetails">Additional details <span class="text-muted">(optional)</span></label>
+          <textarea id="chatReportDetails" class="form-input" rows="3" maxlength="500" placeholder="Share helpful context (up to 500 characters)"></textarea>
+        </div>
+        <div class="chat-report-actions">
+          <button type="button" class="btn btn-secondary" id="cancelChatReport">Cancel</button>
+          <button type="submit" class="btn btn-danger" id="submitChatReport">Send report</button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ================= APPLY FOR LEAVE MODAL ================= -->
+  <div class="modal-overlay" id="leaveModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i data-lucide="file-text"></i> Apply for Student Leave</h3>
+        <button class="modal-close-btn" id="closeLeaveModalBtn">&times;</button>
+      </div>
+      <form id="leaveForm" class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="leaveStartDate">From Date <span class="req">*</span></label>
+            <input type="date" id="leaveStartDate" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label for="leaveEndDate">To Date <span class="req">*</span></label>
+            <input type="date" id="leaveEndDate" class="form-input" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="leaveType">Leave Type</label>
+          <select id="leaveType" class="form-select">
+            <option value="Sick / Medical Leave">Sick / Medical Leave</option>
+            <option value="Family Function">Family Event / Function</option>
+            <option value="Academic Competition">Inter-School Competition / Olympiad</option>
+            <option value="Personal Emergency">Personal Emergency</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="leaveReason">Detailed Reason <span class="req">*</span></label>
+          <textarea id="leaveReason" class="form-textarea" rows="3" placeholder="Provide reason for absence..." required></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelLeaveBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="send"></i> Submit Leave Application</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Socket.io Script -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Student Application Script -->
+  <script src="js/app.js"></script>
+</body>
+</html>

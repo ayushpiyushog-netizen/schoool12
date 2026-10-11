@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B.S.M.P School - Faculty & Admin Control Center</title>
+  <link rel="icon" type="image/png" href="/icons/school-crest.png">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================= 1. SECURE ADMIN LOGIN SCREEN ================= -->
+  <div id="adminAuthScreen" class="auth-wrapper" style="display: none;">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">
+          <img src="/icons/school-crest.png" alt="B.S.M.P School crest">
+        </div>
+        <h2>Faculty & Admin Control Gate</h2>
+        <p>Restricted access for School Faculty, Teachers, and System Administrators.</p>
+      </div>
+
+      <form id="adminLoginForm" class="auth-form">
+        <div class="form-group">
+          <label for="adminEmail">Faculty Email or ID <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="mail"></i>
+            <input type="email" id="adminEmail" class="form-input" placeholder="admin@school.edu" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adminPassword">Admin Password <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <i data-lucide="lock"></i>
+            <input type="password" id="adminPassword" class="form-input" placeholder="Enter admin password" required>
+          </div>
+        </div>
+
+        <!-- Quick Demo Pill -->
+        <div class="demo-credentials-box">
+          <div style="font-weight:700;margin-bottom:0.25rem;color:var(--purple);"><i data-lucide="key"></i> Default Faculty Login:</div>
+          <div class="demo-pill-btn" onclick="fillAdminDemo()">
+            Email: <code>admin@school.edu</code> • Pass: <code>admin123</code> (Click to Fill)
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" style="background:#7c3aed;">
+          <i data-lucide="log-in"></i> Authenticate & Enter Admin Panel
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Looking for student access?</span>
+        <a href="/" class="auth-link"><i data-lucide="arrow-left"></i> Go to Student Portal</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= 2. AUTHENTICATED ADMIN CONTROL CENTER ================= -->
+  <div id="adminAppLayout" class="app-layout" style="display: none;">
+    <!-- TOP NAVIGATION BAR -->
+    <header class="top-nav">
+      <div class="brand">
+        <div class="brand-logo">
+          <img src="/icons/school-crest.png" alt="B.S.M.P School crest">
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">B.S.M.P School Admin</span>
+          <span class="brand-subtitle">Faculty & Teacher Control Hub • /admin</span>
+        </div>
+      </div>
+
+      <div class="academic-badge">
+        <span class="pulse-dot"></span>
+        <span>Faculty Session Active</span>
+        <span class="term-tag" style="background:var(--purple-bg);color:var(--purple-text);">Admin</span>
+      </div>
+
+      <div class="nav-controls">
+        <!-- Theme Changer -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+          <i data-lucide="moon" id="themeIcon"></i>
+          <span id="themeText">Dark</span>
+        </button>
+
+        <!-- Link to Student Portal -->
+        <a href="/" target="_blank" class="btn btn-sm btn-outline admin-student-link" title="Open Student Portal in new tab">
+          <i data-lucide="external-link"></i>
+          <span>Student Portal ↗</span>
+        </a>
+        <button id="studentPreviewBtn" type="button" class="btn btn-sm btn-outline" title="Switch to the student-facing portal">
+          <i data-lucide="eye"></i>
+          <span>Student View</span>
+        </button>
+
+        <!-- Admin Profile Badge -->
+        <div class="profile-header-card">
+          <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Alexander" alt="Avatar" id="adminAvatar" class="user-avatar">
+          <div class="profile-header-info">
+            <div class="user-name-role">
+              <span id="adminName" class="user-name">Prof. Alexander Vance</span>
+              <span class="badge" style="background:#7c3aed;color:#fff;">Faculty</span>
+            </div>
+            <span id="adminSub" class="user-sub">Academic Head</span>
+          </div>
+        </div>
+
+        <!-- Admin Logout Button -->
+        <button id="adminLogoutBtn" class="btn btn-sm btn-outline btn-logout" title="Log Out of Admin">
+          <i data-lucide="log-out"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ADMIN CONTENT CONTAINER -->
+    <main class="main-content" style="padding: 2rem 2.5rem;">
+      <div class="panel-header">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+            <span class="badge" style="background:#7c3aed; color:#fff; font-size:0.75rem;">FACULTY CONTROL CENTER</span>
+            <span class="badge badge-green">LIVE SYSTEM</span>
+          </div>
+          <h1 class="page-title">School Administration & Student Management</h1>
+          <p class="page-desc">Oversee student rosters, mark daily attendance, review leave applications, and broadcast announcements.</p>
+        </div>
+        <div class="today-date-badge">
+          <i data-lucide="clock"></i>
+          <span id="liveClock">Oct 06, 2026</span>
+        </div>
+        <button type="button" id="adminChatReportsJump" class="btn btn-sm btn-outline admin-chat-reports-jump">
+          <i data-lucide="flag"></i>
+          <span>Chat reports</span>
+          <span id="adminChatReportShortcutCount" class="badge badge-pill badge-amber">0</span>
+        </button>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Enrolled Students</span>
+            <span class="stat-icon icon-blue"><i data-lucide="users"></i></span>
+          </div>
+          <div class="stat-value" id="statStudentCount">1</div>
+          <div class="stat-footer text-muted">Registered in portal</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Pending Leave Requests</span>
+            <span class="stat-icon icon-amber"><i data-lucide="clock"></i></span>
+          </div>
+          <div class="stat-value" id="statPendingLeaves">0</div>
+          <div class="stat-footer text-amber">Requires teacher review</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">PTM Bookings</span>
+            <span class="stat-icon icon-purple"><i data-lucide="handshake"></i></span>
+          </div>
+          <div class="stat-value" id="statPTMBookings">0</div>
+          <div class="stat-footer text-purple">Parent meetings booked</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-title">Official Circulars</span>
+            <span class="stat-icon icon-green"><i data-lucide="megaphone"></i></span>
+          </div>
+          <div class="stat-value" id="statNoticesCount">1</div>
+          <div class="stat-footer text-green">Broadcast to students</div>
+        </div>
+      </div>
+
+      <!-- TWO-COLUMN WORKFLOW: Leave Approvals + Daily Attendance Marker -->
+      <div class="grid-2col">
+        <!-- 1. Review & Approve Student Leaves -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <i data-lucide="file-check"></i>
+              <span>Pending Student Leave Approvals</span>
+            </div>
+            <span class="badge badge-amber" id="leaveBadge">0 Pending</span>
+          </div>
+          <div id="adminLeavesContainer" class="admin-leave-list"></div>
+        </div>
+
+        <!-- 2. Daily Class Attendance Marker -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <i data-lucide="user-check"></i>
+              <span>Mark Student Attendance</span>
+            </div>
+          </div>
+          <form id="markAttendanceForm" class="admin-form">
+            <div class="form-group">
+              <label for="attendStudentSelect">Select Student <span class="req">*</span></label>
+              <select id="attendStudentSelect" class="form-select" required></select>
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="attendDate">Date</label>
+                <input type="date" id="attendDate" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="attendStatus">Status <span class="req">*</span></label>
+                <select id="attendStatus" class="form-select">
+                  <option value="Present">Present (Full Day)</option>
+                  <option value="Absent">Absent</option>
+                  <option value="Late">Late Arrival</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="attendRemarks">Remarks / Notes</label>
+              <input type="text" id="attendRemarks" class="form-input" placeholder="e.g. Present and punctual">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="check"></i> Submit Attendance Record
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- WORKFLOW: Broadcast Notice + Student Roster Management -->
+      <div class="grid-2col mt-4">
+        <!-- Broadcast Announcement -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <i data-lucide="megaphone"></i>
+              <span>Broadcast School Announcement</span>
+            </div>
+            <span class="badge badge-pill badge-green">Live Broadcast</span>
+          </div>
+          <form id="announcementForm" class="admin-form">
+            <div class="form-group">
+              <label for="noticeTitle">Notice Title <span class="req">*</span></label>
+              <input type="text" id="noticeTitle" class="form-input" placeholder="e.g. Mid-Term Examination Datesheet Released" required>
+            </div>
+            <div class="form-group">
+              <label for="noticeCategory">Category</label>
+              <select id="noticeCategory" class="form-select">
+                <option value="URGENT">URGENT Circular</option>
+                <option value="ACADEMIC" selected>ACADEMIC Notice</option>
+                <option value="EVENT">SCHOOL EVENT / Sports</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="noticeContent">Details <span class="req">*</span></label>
+              <textarea id="noticeContent" class="form-textarea" rows="3" placeholder="Provide full details of the notice..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="send"></i> Publish Live Notice (Updates Portal & Chat)
+            </button>
+          </form>
+        </div>
+
+        <!-- PTM Feedback & Observations -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <i data-lucide="message-square-quote"></i>
+              <span>Add Student PTM Feedback & Rating</span>
+            </div>
+          </div>
+          <form id="ptmFeedbackForm" class="admin-form">
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="feedbackStudentName">Student Name <span class="req">*</span></label>
+                <input type="text" id="feedbackStudentName" class="form-input" placeholder="e.g. Kabir Sharma" required>
+              </div>
+              <div class="form-group">
+                <label for="feedbackRating">Rating (1 to 5 Stars)</label>
+                <select id="feedbackRating" class="form-select">
+                  <option value="5">★★★★★ (5 Stars - Outstanding)</option>
+                  <option value="4" selected>★★★★☆ (4 Stars - Very Good)</option>
+                  <option value="3">★★★☆☆ (3 Stars - Satisfactory)</option>
+                  <option value="2">★★☆☆☆ (2 Stars - Needs Improvement)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="feedbackRemarks">Teacher Observations <span class="req">*</span></label>
+              <textarea id="feedbackRemarks" class="form-textarea" rows="2" placeholder="e.g. High analytical aptitude, participate more in group discussions" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="feedbackAction">Student Action Item</label>
+              <input type="text" id="feedbackAction" class="form-input" placeholder="e.g. Practice 5 trigonometry word problems daily">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i data-lucide="file-plus"></i> Save PTM Feedback
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="messages-square"></i>
+            <span>Manage Class Chat</span>
+          </div>
+          <button type="button" class="btn btn-sm btn-danger" id="clearChatBtn">Clear Selected Chat</button>
+        </div>
+        <div class="admin-chat-toolbar">
+          <div class="form-group">
+            <label for="adminChatChannel">Channel</label>
+            <select id="adminChatChannel" class="form-select"></select>
+          </div>
+          <span id="adminChatMessageCount" class="badge badge-pill badge-blue">0 messages</span>
+        </div>
+        <div id="adminChatMessages" class="admin-chat-messages" aria-live="polite"></div>
+        <section class="admin-chat-reports" aria-labelledby="adminChatReportsTitle">
+          <div class="admin-chat-reports-heading">
+            <h3 id="adminChatReportsTitle">Pending message reports</h3>
+            <span id="adminChatReportCount" class="badge badge-pill badge-amber">0 pending</span>
+          </div>
+          <div id="adminChatReports" class="admin-chat-report-list" aria-live="polite"></div>
+        </section>
+      </div>
+
+      <!-- FULL STUDENT ROSTER TABLE -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="users"></i>
+            <span>Enrolled Students Roster & Login Security</span>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="openAddStudentModal()">+ Register New Student</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Roll Number</th>
+                <th>Class & Section</th>
+                <th>School House</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentRosterTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="user-cog"></i>
+            <span>Manage Teacher & Admin Accounts</span>
+          </div>
+        </div>
+        <form id="facultyAccountForm" class="admin-form">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="facultyName">Full Name <span class="req">*</span></label>
+              <input type="text" id="facultyName" class="form-input" maxlength="80" required>
+            </div>
+            <div class="form-group">
+              <label for="facultyEmail">Email <span class="req">*</span></label>
+              <input type="email" id="facultyEmail" class="form-input" maxlength="120" required>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="facultyRole">Account Role</label>
+              <select id="facultyRole" class="form-select">
+                <option value="Teacher">Teacher</option>
+                <option value="Administrator">Administrator</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="facultyPassword">Temporary Password <span class="req">*</span></label>
+              <input type="password" id="facultyPassword" class="form-input" minlength="8" autocomplete="new-password" required>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="facultySubject">Subject / Department</label>
+              <input type="text" id="facultySubject" class="form-input" maxlength="80" placeholder="e.g. Mathematics">
+            </div>
+            <div class="form-group">
+              <label for="facultyRoom">Room</label>
+              <input type="text" id="facultyRoom" class="form-input" maxlength="80" placeholder="e.g. Faculty Room 101">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary"><i data-lucide="user-plus"></i> Create Faculty Account</button>
+        </form>
+        <div id="facultyAccountList" class="admin-holiday-list" aria-live="polite"></div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="book-open-check"></i>
+            <span>Manage Subjects</span>
+          </div>
+          <div class="subject-status-controls">
+            <span id="syllabusStatusBadge" class="badge badge-pill badge-green">Syllabus Open</span>
+            <button type="button" id="toggleSyllabusStatusBtn" class="btn btn-sm btn-outline">Close Syllabus Editing</button>
+          </div>
+        </div>
+        <form id="subjectForm" class="admin-form subject-admin-form">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="subjectName">Subject Name <span class="req">*</span></label>
+              <input type="text" id="subjectName" class="form-input" maxlength="80" placeholder="e.g. Biology" required>
+            </div>
+            <div class="form-group">
+              <label for="subjectCode">Subject Code <span class="req">*</span></label>
+              <input type="text" id="subjectCode" class="form-input" maxlength="20" pattern="[A-Za-z0-9_-]{2,20}" placeholder="e.g. BIO106" required>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="subjectTeacher">Teacher</label>
+              <input type="text" id="subjectTeacher" class="form-input" maxlength="80" placeholder="e.g. Ms. Rao">
+            </div>
+            <div class="form-group">
+              <label for="subjectWeightage">Exam Weightage</label>
+              <input type="text" id="subjectWeightage" class="form-input" maxlength="80" placeholder="e.g. 80 Marks Theory">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary"><i data-lucide="plus"></i> Add Subject</button>
+        </form>
+        <div id="adminSubjectList" class="admin-holiday-list" aria-live="polite"></div>
+        <section class="admin-datesheet" aria-labelledby="datesheetAdminTitle">
+          <div class="admin-datesheet-heading">
+            <div>
+              <h3 id="datesheetAdminTitle">Exam datesheet</h3>
+              <p>Add or update the official exam schedule shown on the student Exam Syllabus page.</p>
+            </div>
+            <span id="datesheetEntryCount" class="badge badge-pill badge-blue">0 exams</span>
+          </div>
+          <form id="datesheetForm" class="admin-form">
+            <div class="form-group">
+              <label for="datesheetExamTitle">Exam / Term Name <span class="req">*</span></label>
+              <input type="text" id="datesheetExamTitle" class="form-input" maxlength="100" placeholder="e.g. Mid-Term Examination (Term 1) 2026" required>
+            </div>
+            <div class="datesheet-entry-fields">
+              <div class="form-group">
+                <label for="datesheetDate">Exam Date <span class="req">*</span></label>
+                <input type="date" id="datesheetDate" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="datesheetSubject">Subject <span class="req">*</span></label>
+                <select id="datesheetSubject" class="form-select" required>
+                  <option value="">Choose a subject</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="datesheetTime">Exam Time <span class="req">*</span></label>
+                <input type="text" id="datesheetTime" class="form-input" maxlength="60" placeholder="e.g. 9:00 AM - 12:00 PM" required>
+              </div>
+              <div class="form-group">
+                <label for="datesheetRoom">Exam Hall</label>
+                <input type="text" id="datesheetRoom" class="form-input" maxlength="60" placeholder="e.g. Main Hall">
+              </div>
+              <div class="form-group">
+                <label for="datesheetMaxMarks">Maximum Marks <span class="req">*</span></label>
+                <input type="number" id="datesheetMaxMarks" class="form-input" min="1" max="1000" step="1" placeholder="80" required>
+              </div>
+            </div>
+            <div class="datesheet-form-actions">
+              <button type="submit" id="datesheetSubmitBtn" class="btn btn-primary"><i data-lucide="plus"></i> Add Exam</button>
+              <button type="button" id="datesheetCancelEditBtn" class="btn btn-outline" hidden>Cancel Edit</button>
+            </div>
+          </form>
+          <div class="table-responsive admin-datesheet-table-wrap">
+            <table class="data-table admin-datesheet-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Time</th>
+                  <th>Hall</th>
+                  <th>Marks</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminDatesheetBody" aria-live="polite"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- DECLARE NEW HOLIDAY -->
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="calendar-plus"></i>
+            <span>Declare School Holiday / Academic Break</span>
+          </div>
+        </div>
+        <form id="holidayForm" class="admin-form">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="holidayTitle">Holiday Title <span class="req">*</span></label>
+              <input type="text" id="holidayTitle" class="form-input" placeholder="e.g. Science Olympiad Recess" required>
+            </div>
+            <div class="form-group">
+              <label for="holidayType">Category</label>
+              <select id="holidayType" class="form-select">
+                <option value="Festival">Festival</option>
+                <option value="Vacation">Vacation / Break</option>
+                <option value="National Holiday">National Holiday</option>
+                <option value="Gazetted Holiday">Gazetted Holiday</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="holidayDate">Date <span class="req">*</span></label>
+              <input type="date" id="holidayDate" class="form-input" required>
+            </div>
+            <div class="form-group">
+              <label for="holidayDuration">Duration</label>
+              <input type="text" id="holidayDuration" class="form-input" placeholder="e.g. 1 Day" value="1 Day">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="holidayDesc">Reason / Description</label>
+            <input type="text" id="holidayDesc" class="form-input" placeholder="Description of holiday...">
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i data-lucide="plus"></i> Add Holiday to Academic Calendar
+          </button>
+        </form>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-header-title">
+            <i data-lucide="calendar-days"></i>
+            <span>Manage Festivals & Holidays</span>
+          </div>
+        </div>
+        <div id="adminHolidayList" class="admin-holiday-list" aria-live="polite"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= REGISTER STUDENT MODAL (ADMIN) ================= -->
+  <div class="modal-overlay" id="addStudentModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i data-lucide="user-plus"></i> Register Student Account</h3>
+        <button class="modal-close-btn" id="closeAddStudentModalBtn">&times;</button>
+      </div>
+      <form id="addStudentForm" class="modal-body">
+        <div class="form-group">
+          <label for="adminNewName">Full Name <span class="req">*</span></label>
+          <input type="text" id="adminNewName" class="form-input" placeholder="e.g. Priya Sharma" required>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="adminNewRoll">Roll Number <span class="req">*</span></label>
+            <input type="text" id="adminNewRoll" class="form-input" placeholder="e.g. 10A-25" required>
+          </div>
+          <div class="form-group">
+            <label for="adminNewGrade">Class & Section</label>
+            <input type="text" id="adminNewGrade" class="form-input" value="Grade 10 - Section A">
+          </div>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="adminNewHouse">School House</label>
+            <select id="adminNewHouse" class="form-select">
+              <option value="Phoenix House">Phoenix House (Red)</option>
+              <option value="Falcon House">Falcon House (Blue)</option>
+              <option value="Pegasus House">Pegasus House (Green)</option>
+              <option value="Dragon House">Dragon House (Yellow)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="adminNewEmail">Email Address</label>
+            <input type="email" id="adminNewEmail" class="form-input" placeholder="student@school.edu">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="adminNewPassword">Initial Password <span class="req">*</span></label>
+          <input type="text" id="adminNewPassword" class="form-input" value="password123" required>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="cancelAddStudentBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Create Student Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Socket.io Script -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- Admin Application Script -->
+  <script src="js/admin.js"></script>
+</body>
+</html>
